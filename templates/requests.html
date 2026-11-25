@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Membership requests{% endblock %}
+{% block content %}<p><a href="{{ url_for('my_clubs') }}">&larr; My clubs</a></p>
+<h1>{{ club.name }}: membership requests</h1>
+{% if requests %}<div class="card table-wrap"><table class="stack"><thead><tr><th>Student</th><th>Requested</th><th>Decision</th></tr></thead><tbody>
+{% for r in requests %}<tr><td data-label="Student"><b>{{ r.student_name }}</b><div class="hint">{{ r.student_email }}</div></td><td data-label="Requested">{{ r.created_at[:10] }}</td><td data-label="Decision" class="actions">
+{% for d, label, cls in [('accept','Accept',''),('decline','Decline','danger')] %}<form method="post" action="{{ url_for('decide_membership', club_id=club.id, membership_id=r.id, decision=d) }}" style="display:inline">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="expected_status" value="Pending"><button class="{{ cls }}">{{ label }}</button></form>{% endfor %}
+</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<div class="card empty">No pending requests.</div>{% endif %}{% endblock %}

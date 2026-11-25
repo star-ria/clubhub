@@ -1,0 +1,3 @@
+{% macro feed(items) %}{% for a in items %}<article class="card announcement"><h2>{{ a.title }}</h2>
+<div class="hint">{{ a.posted_at|pretty_datetime }}</div><p class="msg">{{ a.message }}</p></article>
+{% else %}<div class="card empty">No announcements yet.</div>{% endfor %}{% endmacro %}

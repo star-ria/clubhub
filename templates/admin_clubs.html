@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block title %}Review clubs{% endblock %}
+{% block content %}<h1>Club registrations</h1>
+<form class="filters" method="get"><label for="status" style="margin:0">Status</label>
+<select id="status" name="status" onchange="this.form.submit()"><option value="">All</option>
+{% for s in STATUSES %}<option {% if selected==s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select><noscript><button>Filter</button></noscript></form>
+{% if clubs %}<div class="card table-wrap"><table class="stack"><thead><tr><th>Name</th><th>Category</th><th>Status</th><th>Registered</th><th>Actions</th></tr></thead><tbody>
+{% for c in clubs %}<tr><td data-label="Club"><b>{{ c.name }}</b><div class="hint">Rep: {{ c.leader_name }} · {{ c.contact_email }}</div><div class="hint">{{ c.description }}</div></td>
+<td data-label="Category">{{ c.category }}</td><td data-label="Status"><span class="badge {{ c.status }}">{{ c.status }}</span>{% if c.rejection_reason %}<div class="hint">{{ c.rejection_reason }}</div>{% endif %}</td>
+<td data-label="Registered">{{ c.created_at[:10] }}</td><td data-label="Actions" class="actions">
+{% if c.status == 'Pending' %}
+<form method="post" action="{{ url_for('admin_action', club_id=c.id, action='approve') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="expected_status" value="Pending"><input type="hidden" name="filter" value="{{ selected }}"><button>Approve</button></form>
+<form method="post" action="{{ url_for('admin_action', club_id=c.id, action='reject') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="expected_status" value="Pending"><input type="hidden" name="filter" value="{{ selected }}">
+<input type="text" name="reason" placeholder="Reason (required)" maxlength="500" required aria-label="Rejection reason for {{ c.name }}"><button class="danger">Reject</button></form>
+{% elif c.status == 'Approved' %}
+<form method="post" action="{{ url_for('admin_action', club_id=c.id, action='deactivate') }}" onsubmit="return confirm('Deactivate this club? It will be hidden from students (the record is kept).')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="expected_status" value="Approved"><input type="hidden" name="filter" value="{{ selected }}"><button class="secondary">Deactivate</button></form>
+{% else %}<span class="hint">No actions</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<div class="card empty">No clubs found.</div>{% endif %}{% endblock %}

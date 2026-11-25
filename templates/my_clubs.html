@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}My clubs{% endblock %}
+{% block content %}<h1>My clubs</h1>
+{% if not g.user.totp_enabled %}<div class="card">Protect your account with two-factor authentication. <a href="{{ url_for('security_page') }}">Set it up</a>.</div>{% endif %}
+{% for c in clubs %}<div class="card"><h2>{{ c.name }} <span class="badge {{ c.status }}">{{ c.status }}</span></h2>
+<p>{{ c.category }} · registered {{ c.created_at[:10] }}</p><p>{{ c.description }}</p>
+{% if c.status == 'Rejected' and c.rejection_reason %}<p class="err">Reason: {{ c.rejection_reason }}</p>{% endif %}
+{% if c.status == 'Approved' %}<a class="btn" href="{{ url_for('leader_announcements', club_id=c.id) }}">Announcements</a>
+<a class="btn" href="{{ url_for('edit_profile', club_id=c.id) }}">Edit profile</a>
+<a class="btn" href="{{ url_for('leader_events', club_id=c.id) }}">Manage events</a>
+<a class="btn" href="{{ url_for('membership_requests', club_id=c.id) }}">Membership requests{% if c.pending_requests %} ({{ c.pending_requests }}){% endif %}</a>
+<form method="post" action="{{ url_for('toggle_accepting', club_id=c.id) }}" style="display:inline"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<input type="hidden" name="accepting" value="{{ 0 if c.accepting_members else 1 }}"><button class="secondary">{{ 'Close to new members' if c.accepting_members else 'Reopen to new members' }}</button></form>
+{% if not c.accepting_members %}<span class="hint">Closed to new members</span>{% endif %}{% endif %}</div>
+{% else %}<div class="card">You haven't registered a club yet. <a href="{{ url_for('register_club') }}">Register one</a>.</div>{% endfor %}{% endblock %}

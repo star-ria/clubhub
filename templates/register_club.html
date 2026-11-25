@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}Register a club{% endblock %}
+{% macro err(f) %}{% if errors.get(f) %}<div class="err" id="{{ f }}-err">{{ errors[f] }}</div>{% endif %}{% endmacro %}
+{% block content %}<div class="card"><h1>Register a new club</h1>
+<p class="hint">Fields marked * are required. Your club stays <b>Pending</b> until an administrator approves it.</p>
+{% if errors.get('_form') %}<div class="flash error">{{ errors['_form'] }}</div>{% endif %}
+<form method="post" novalidate><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label for="name">Club name * (3–60 characters)</label><input id="name" name="name" value="{{ form.get('name','') }}">{{ err('name') }}
+<label for="category">Category *</label><select id="category" name="category"><option value="">Choose…</option>
+{% for c in CATEGORIES %}<option {% if form.get('category')==c %}selected{% endif %}>{{ c }}</option>{% endfor %}</select>{{ err('category') }}
+<label for="description">Description * (max 500)</label><textarea id="description" name="description" rows="4" maxlength="600">{{ form.get('description','') }}</textarea>{{ err('description') }}
+<label for="contact_email">Contact email *</label><input id="contact_email" name="contact_email" type="email" value="{{ form.get('contact_email','') }}">{{ err('contact_email') }}
+<label for="contact_phone">Contact phone</label><input id="contact_phone" name="contact_phone" value="{{ form.get('contact_phone','') }}">{{ err('contact_phone') }}
+<label for="meeting_info">Meeting time / location</label><input id="meeting_info" name="meeting_info" value="{{ form.get('meeting_info','') }}">{{ err('meeting_info') }}
+<p><button>Submit for review</button></p></form></div>{% endblock %}

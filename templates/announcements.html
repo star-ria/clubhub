@@ -1,0 +1,3 @@
+{% extends "base.html" %}{% from "_announcements.html" import feed %}{% block title %}Announcements – {{ club.name }}{% endblock %}
+{% block content %}<p><a href="{{ url_for('club_detail', club_id=club.id) }}">&larr; {{ club.name }}</a></p>
+<h1>{{ club.name }}: announcements</h1>{{ feed(items) }}{% endblock %}

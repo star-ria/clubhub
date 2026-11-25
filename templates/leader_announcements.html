@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% from "_announcements.html" import feed %}{% block title %}Announcements – {{ club.name }}{% endblock %}
+{% macro err(f) %}{% if errors.get(f) %}<div class="err">{{ errors[f] }}</div>{% endif %}{% endmacro %}
+{% block content %}<p><a href="{{ url_for('my_clubs') }}">&larr; My clubs</a></p>
+<h1>{{ club.name }}: announcements</h1>
+<div class="card"><h2>New announcement</h2>
+<p class="hint">Only your club's members can see announcements, and they are notified when you post.</p>
+{% if errors.get('_form') %}<div class="flash error">{{ errors['_form'] }}</div>{% endif %}
+<form method="post" novalidate><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label for="title">Title * (max 80)</label>
+<input id="title" name="title" value="{{ form.get('title','') }}" aria-describedby="title-count" oninput="cnt(this,'title-count',80)">
+<div class="counter" id="title-count">{{ (form.get('title','') or '')|length }}/80</div>{{ err('title') }}
+<label for="message">Message * (max 1,000)</label>
+<textarea id="message" name="message" rows="6" aria-describedby="message-count" oninput="cnt(this,'message-count',1000)">{{ form.get('message','') }}</textarea>
+<div class="counter" id="message-count">{{ (form.get('message','') or '')|length }}/1000</div>{{ err('message') }}
+<p><button>Post</button></p></form></div>
+<h2>Posted announcements</h2>{{ feed(items) }}
+<script>function cnt(el,id,max){var c=document.getElementById(id);c.textContent=el.value.length+'/'+max;c.className='counter'+(el.value.length>max?' over':'');}</script>
+{% endblock %}

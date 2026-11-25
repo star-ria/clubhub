@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}{{ club.name }}{% endblock %}
+{% block content %}<p><a href="{{ url_for('browse_clubs') }}">&larr; Back to clubs</a></p>
+<div class="card"><h1>{{ club.name }}</h1><span class="chip">{{ club.category }}</span>
+<p>{{ club.description }}</p>
+{% if club.meeting_info %}<p><b>Meetings:</b> {{ club.meeting_info }}</p>{% endif %}
+<p><b>Contact:</b> {{ club.contact_email }}{% if club.contact_phone %} · {{ club.contact_phone }}{% endif %}</p>
+<hr style="border:0;border-top:1px solid var(--border);margin:1rem 0">
+{% if membership == 'Accepted' %}<span class="badge Approved">Member</span> <a href="{{ url_for('club_announcements', club_id=club.id) }}">View announcements</a>
+{% elif membership == 'Pending' %}<button disabled aria-disabled="true">Request pending</button>
+{% elif not club.accepting_members %}<div class="flash error">This club is not accepting new members right now.</div>
+{% else %}{% if membership == 'Declined' %}<p class="hint">Your previous request was declined. You can request again.</p>{% endif %}
+<form method="post" action="{{ url_for('join_club', club_id=club.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button>Join this club</button></form>{% endif %}
+</div>{% endblock %}

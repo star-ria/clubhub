@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block title %}Upcoming events{% endblock %}
+{% block content %}<h1>Upcoming events</h1>
+{% for m in errors %}<div class="flash error" role="alert">{{ m }}</div>{% endfor %}
+<form class="card search" method="get">
+  <div><label for="club">Club</label><select id="club" name="club"><option value="">All clubs</option>
+    {% for c in clubs %}<option value="{{ c.id }}" {% if club_id==c.id %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></div>
+  <div><label for="from">From</label><input id="from" name="from" type="date" value="{{ date_from }}"></div>
+  <div><label for="to">To</label><input id="to" name="to" type="date" value="{{ date_to }}"></div>
+  <div><button>Filter</button> {% if filtered %}<a class="btn secondary" href="{{ url_for('student_events') }}">Clear</a>{% endif %}</div>
+</form>
+{% if events %}{% for e in events %}<div class="card club-card"><h2><a href="{{ url_for('event_detail', event_id=e.id) }}">{{ e.title }}</a></h2>
+<div class="event-meta">{{ e.club_name }}</div>
+<p>{{ e.event_date|pretty_date }} · {{ e.start_time|pretty_time }}{% if e.end_time %} – {{ e.end_time|pretty_time }}{% endif %} · {{ e.venue }}</p></div>{% endfor %}
+{% elif filtered and any_upcoming %}<div class="card empty" aria-live="polite">No events match your filters</div>
+{% else %}<div class="card empty" aria-live="polite">No upcoming events</div>{% endif %}{% endblock %}

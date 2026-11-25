@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block title %}Edit profile – {{ club.name }}{% endblock %}
+{% macro err(f) %}{% if errors.get(f) %}<div class="err">{{ errors[f] }}</div>{% endif %}{% endmacro %}
+{% block content %}<p><a href="{{ url_for('my_clubs') }}">&larr; My clubs</a></p>
+<div class="card"><h1>Edit club profile</h1>
+<p><b>{{ club.name }}</b> <span class="hint">· {{ club.category }} (the club name can't be changed after registration)</span></p>
+{% if errors.get('_form') %}<div class="flash error">{{ errors['_form'] }}</div>{% endif %}
+<form method="post" novalidate><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label for="description">Description * (max 500)</label>
+<textarea id="description" name="description" rows="5" oninput="document.getElementById('count').textContent=this.value.length">{{ form.get('description','') or '' }}</textarea>
+<div class="hint"><span id="count">{{ (form.get('description','') or '')|length }}</span>/500 characters</div>{{ err('description') }}
+<label for="contact_email">Contact email *</label><input id="contact_email" name="contact_email" type="email" value="{{ form.get('contact_email','') or '' }}">{{ err('contact_email') }}
+<label for="contact_phone">Contact phone</label><input id="contact_phone" name="contact_phone" value="{{ form.get('contact_phone','') or '' }}">{{ err('contact_phone') }}
+<label for="meeting_info">Meeting time / location</label><input id="meeting_info" name="meeting_info" value="{{ form.get('meeting_info','') or '' }}">{{ err('meeting_info') }}
+<p><button>Save</button> <a class="btn secondary" href="{{ url_for('my_clubs') }}">Cancel</a></p>
+<p class="hint">Cancel discards any changes you've made on this page.</p></form></div>{% endblock %}

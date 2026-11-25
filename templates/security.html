@@ -1,0 +1,27 @@
+{% extends "base.html" %}{% block title %}Account security{% endblock %}
+{% block content %}<h1>Account security</h1>
+{% if backup_codes %}
+<div class="card"><h2>Two-factor authentication is on <span class="badge Approved">On</span></h2>
+<p><b>Save these backup codes now.</b> Each works once if you lose your phone. They will not be shown again.</p>
+<div class="codes">{% for c in backup_codes %}<div>{{ c }}</div>{% endfor %}</div></div>
+{% elif u.totp_enabled %}
+<div class="card"><h2>Two-factor authentication <span class="badge Approved">On</span></h2>
+<p>To turn it off, confirm your password and a current code.</p>
+<form method="post" action="{{ url_for('disable_2fa') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label for="password">Password</label><input id="password" name="password" type="password" required autocomplete="current-password">
+<label for="code">Authenticator or backup code</label><input id="code" name="code" required autocomplete="off">
+<p><button class="danger">Turn off 2FA</button></p></form></div>
+{% elif secret %}
+<div class="card"><h2>Set up two-factor authentication</h2>
+<ol><li>In an authenticator app (Google Authenticator, Microsoft Authenticator, Authy…) choose <b>add account → enter a setup key</b>.</li>
+<li>Account: <b>{{ u.email }}</b>, type: time-based. Key:<div class="secret">{{ secret }}</div></li>
+<li>Enter the 6-digit code the app shows:</li></ol>
+<form method="post" action="{{ url_for('confirm_2fa') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label for="code">Code</label><input id="code" name="code" inputmode="numeric" autocomplete="off" required>
+<p><button>Turn on 2FA</button></p></form>
+<details><summary class="hint">Setup link for apps that accept one</summary><div class="uri">{{ uri }}</div></details></div>
+{% else %}
+<div class="card"><h2>Two-factor authentication <span class="badge Inactive">Off</span></h2>
+<p>Adds a code from your phone to sign-in, so a stolen password alone isn't enough to manage your club.</p>
+<form method="post" action="{{ url_for('start_2fa') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button>Set up 2FA</button></form></div>
+{% endif %}{% endblock %}

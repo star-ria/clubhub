@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block title %}My memberships{% endblock %}
+{% block content %}<h1>My memberships</h1>
+{% for m in items %}<div class="card"><b>{{ m.club_name }}</b> <span class="badge {{ 'Approved' if m.status == 'Accepted' else ('Rejected' if m.status == 'Declined' else 'Pending') }}">{{ 'Member' if m.status == 'Accepted' else m.status }}</span>
+<div class="hint">{{ m.category }} · requested {{ m.created_at[:10] }}</div>{% if m.status == 'Accepted' and m.club_status == 'Approved' %}<p><a href="{{ url_for('club_announcements', club_id=m.club_id) }}">View announcements</a></p>{% endif %}</div>
+{% else %}<div class="card">You haven't requested to join any clubs yet. <a href="{{ url_for('browse_clubs') }}">Browse clubs</a>.</div>{% endfor %}{% endblock %}

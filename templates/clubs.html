@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block title %}Browse clubs{% endblock %}
+{% block content %}<h1>Find a club</h1>
+<form class="card search" method="get" role="search">
+  <div class="grow"><label for="q">Search by keyword</label><input id="q" name="q" value="{{ q }}" maxlength="100" placeholder="e.g. chess, coding, astronomy"></div>
+  <div><label for="category">Category</label><select id="category" name="category"><option value="">All categories</option>
+    {% for c in CATEGORIES %}<option {% if category==c %}selected{% endif %}>{{ c }}</option>{% endfor %}</select></div>
+  <div><button>Search</button> {% if q or category %}<a class="btn secondary" href="{{ url_for('browse_clubs') }}">Clear</a>{% endif %}</div>
+</form>
+{% if clubs %}<div class="count" aria-live="polite">{{ clubs|length }} club{{ '' if clubs|length == 1 else 's' }} found</div>
+{% for c in clubs %}<div class="card club-card"><h2><a href="{{ url_for('club_detail', club_id=c.id) }}">{{ c.name }}</a></h2>
+<span class="chip">{{ c.category }}</span><p>{{ c.description|truncate(140) }}</p></div>{% endfor %}
+{% else %}<div class="card empty" aria-live="polite">No clubs found</div>{% endif %}{% endblock %}
